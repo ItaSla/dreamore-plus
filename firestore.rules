@@ -1,0 +1,62 @@
+rules_version = '2';
+
+// ===========================================================================
+// DREAMORE+ — regras de segurança do Firestore
+// Como aplicar: console.firebase.google.com > Firestore Database > Regras
+// Ou pelo Firebase CLI: firebase deploy --only firestore:rules
+//
+// Limite honesto: estas regras impedem acesso anônimo, impedem que um usuário
+// se torne administrador e protegem a exclusão. Não impedem que um usuário
+// logado edite publicações de outro. Para isso seria preciso validar cada
+// alteração em Cloud Functions (fica como próximo passo).
+// ===========================================================================
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return signedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Administrador';
+    }
+    // Dados iniciais só podem ser gravados enquanto meta/seeded não existir
+    function seeding() {
+      return signedIn() && !exists(/databases/$(database)/documents/meta/seeded);
+    }
+
+    match /meta/{doc} {
+      allow read: if true;
+      allow create: if seeding();
+      allow update, delete: if false;
+    }
+
+    // Perfis são públicos (diretório da comunidade e login por nome de usuário)
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if (signedIn() && request.auth.uid == userId
+                        && request.resource.data.role == 'Desenvolvedor')
+                    || seeding();
+      // Ninguém altera o próprio papel; só administradores alteram papéis
+      allow update: if (signedIn() && request.auth.uid == userId
+                        && request.resource.data.role == resource.data.role)
+                    || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /projects/{id}     { allow read: if true; allow create, update: if signedIn() || seeding(); allow delete: if isAdmin() || (signedIn() && resource.data.owner == request.auth.uid); }
+    match /posts/{id}        { allow read: if true; allow create, update: if signedIn() || seeding(); allow delete: if isAdmin() || (signedIn() && resource.data.author == request.auth.uid); }
+    match /assets/{id}       { allow read: if true; allow write: if signedIn() || seeding(); }
+    match /groups/{id}       { allow read: if true; allow write: if signedIn() || seeding(); }
+    match /apps/{id}         { allow read: if true; allow write: if signedIn() || seeding(); }
+    match /courses/{id}      { allow read: if true; allow write: if signedIn() || seeding(); }
+    match /messages/{id}     { allow read: if true; allow write: if signedIn() || seeding(); }
+    match /social/{id}       { allow read: if true; allow write: if signedIn() || seeding(); }
+    match /presence/{id}     { allow read: if true; allow write: if signedIn(); }
+
+    // Qualquer outro caminho fica bloqueado
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

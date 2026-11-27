@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark" data-hfont="eastwood">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DREAMORE+ | Plataforma Indie Game Dev</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="route-bar"><i></i></div>
+
+  <!-- 1. Tela inicial: somente agradecimentos -->
+  <div id="splash" class="stage">
+    <div class="checker"></div>
+    <div class="credits" id="credits">
+      <small>Agradecimentos</small>
+      <h2>Obrigado aos desenvolvedores do site</h2>
+      <div class="names" id="credit-names"></div>
+      <div class="hint">Clique para continuar</div>
+    </div>
+  </div>
+
+  <!-- Logo: aparece no centro e desliza para dentro do cartão de login -->
+  <div id="brand"><span class="lg">D+</span><span class="nm" data-notr>DREAMORE<b>+</b></span></div>
+
+  <!-- 2. Cadastro / Login -->
+  <section id="auth" class="stage" hidden>
+    <div class="checker"></div>
+    <div class="auth-card" id="auth-card">
+      <div class="auth-top"><div id="auth-slot"></div>
+        <select class="in slim" id="auth-lang" aria-label="Idioma"><option value="pt">Português</option><option value="en">English</option><option value="es">Español</option></select>
+      </div>
+      <div class="tabs" role="tablist"><button id="tab-login" class="on" data-act="authTab" data-t="login">Entrar</button><button id="tab-reg" data-act="authTab" data-t="reg">Criar conta</button></div>
+
+      <form id="f-login" data-form="login" autocomplete="on">
+        <div id="saved" class="saved"></div>
+        <label class="f" for="li-id">Nome de usuário ou e-mail</label><input class="in" id="li-id" name="id" required autocomplete="username" />
+        <label class="f" for="li-pw">Senha</label><input class="in" id="li-pw" name="pw" type="password" required autocomplete="current-password" />
+        <label class="f" style="display:flex;gap:.5rem;align-items:center"><input type="checkbox" name="save" checked /> Salvar esta conta neste dispositivo</label>
+        <div class="err" id="err-login" role="alert"></div>
+        <button class="btn pri block" type="submit">Entrar</button>
+      </form>
+
+      <form id="f-reg" data-form="register" hidden autocomplete="on" novalidate>
+        <div class="steps-ind" id="reg-steps" aria-label="Etapas do cadastro">
+          <span class="sdot on">1</span><span class="sbar"><i></i></span><span class="sdot">2</span><span class="sbar"><i></i></span><span class="sdot">3</span>
+        </div>
+
+        <div class="rstep" data-s="1">
+          <h3 class="step-title">Sua conta</h3><p class="step-sub">Como você vai entrar na plataforma.</p>
+          <div style="display:flex;gap:1rem;align-items:center">
+            <div class="av lg2" id="reg-prev" style="width:64px;height:64px;font-size:1.4rem">?</div>
+            <div style="flex:1;min-width:0"><label class="f" style="margin-top:0" for="reg-photo">Foto de perfil (opcional)</label><input id="reg-photo" type="file" accept="image/*" class="sm" style="max-width:100%" data-chg="regPhoto" /></div>
+          </div>
+          <label class="f" for="r-user">Nome de usuário</label><input class="in" id="r-user" name="user" required minlength="3" maxlength="24" autocomplete="username" />
+          <label class="f" for="r-mail">E-mail</label><input class="in" id="r-mail" name="mail" type="email" required autocomplete="email" />
+          <label class="f" for="r-pw">Senha (mínimo 6 caracteres)</label><input class="in" id="r-pw" name="pw" type="password" required minlength="6" autocomplete="new-password" />
+        </div>
+
+        <div class="rstep" data-s="2" hidden>
+          <h3 class="step-title">Sobre você</h3><p class="step-sub">Tudo opcional. Ajuda outras pessoas a te conhecerem.</p>
+          <label class="f" for="r-full">Nome completo</label><input class="in" id="r-full" name="full" maxlength="80" autocomplete="name" />
+          <label class="f" for="r-birth">Data de nascimento</label><input class="in" id="r-birth" name="birth" type="date" />
+          <label class="f" for="r-country">País</label><select class="in" id="r-country" name="country"><option value="">Selecione</option><option>Brasil</option><option>Portugal</option><option>Argentina</option><option>Chile</option><option>Colômbia</option><option>México</option><option>Espanha</option><option>Estados Unidos</option><option>Outro</option></select>
+        </div>
+
+        <div class="rstep" data-s="3" hidden>
+          <h3 class="step-title">Sua atuação</h3><p class="step-sub">Para montar seu perfil de gamedev.</p>
+          <label class="f" for="r-main">Função principal</label><select class="in" id="r-main" name="mainRole"><option value="">Selecione</option><option>Programador(a) de jogos</option><option>Designer de jogos</option><option>Artista 2D / Pixel art</option><option>Artista 3D</option><option>Animador(a)</option><option>Músico / Sound designer</option><option>Roteirista / Narrativa</option><option>Produtor(a)</option><option>Outro</option></select>
+          <label class="f" for="r-level">Nível de experiência</label><select class="in" id="r-level" name="level"><option value="">Selecione</option><option>Iniciante</option><option>Intermediário</option><option>Avançado</option></select>
+          <label class="f" for="r-tools">Ferramentas que você usa</label><input class="in" id="r-tools" name="tools" placeholder="Ex.: Unity, Godot, Aseprite, Blender" />
+          <label class="f" style="display:flex;gap:.5rem;align-items:flex-start;font-weight:500;margin-top:1rem"><input type="checkbox" name="terms" required style="margin-top:.2rem" /> <span>Li e aceito os termos de conteúdo e propriedade intelectual</span></label>
+        </div>
+
+        <div class="err" id="err-reg" role="alert"></div>
+        <div class="rnav">
+          <button type="button" class="btn ghost" id="reg-back" data-act="regPrev" hidden>Voltar</button>
+          <button type="button" class="btn pri" id="reg-next" data-act="regNext">Continuar</button>
+          <button type="submit" class="btn pri" id="reg-done" hidden>Criar conta</button>
+        </div>
+      </form>
+
+      <div class="divider">ou</div>
+      <div class="gbox" id="gbox"></div>
+    </div>
+  </section>
+
+  <!-- 3. Aplicativo -->
+  <div id="app" hidden>
+    <aside id="side">
+      <div class="side-brand"><span class="lg">D+</span><span class="nm" data-notr>DREAMORE<b>+</b></span></div>
+      <nav id="nav" aria-label="Principal"></nav>
+      <div class="me" id="me" data-act="nav" data-to="profile" tabindex="0" role="link"></div>
+    </aside>
+    <div class="main-col">
+      <div class="checker"></div>
+      <header class="top">
+        <button class="icon-btn" data-act="side" aria-label="Abrir ou fechar a barra lateral" id="burger"></button>
+        <h1 id="page-title"></h1>
+        <select class="in slim" id="app-lang" aria-label="Idioma"><option value="pt">PT</option><option value="en">EN</option><option value="es">ES</option></select>
+        <button class="icon-btn" data-act="theme" aria-label="Alternar tema claro e escuro" id="theme-btn"></button>
+      </header>
+      <main id="view" tabindex="-1"></main>
+    </div>
+  </div>
+
+  <div id="msg-toasts" aria-live="polite"></div>
+  <div id="lightbox" hidden data-act="unzoom"><img alt="Imagem ampliada" /></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/firebase.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/views.js"></script>
+  <script src="js/presence.js"></script>
+  <script src="js/notify.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/explore.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/projects.js"></script>
+  <script src="js/market.js"></script>
+  <script src="js/help.js"></script>
+  <script src="js/people.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
